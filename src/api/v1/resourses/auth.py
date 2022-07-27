@@ -99,7 +99,7 @@ def refresh_token():
     return {"access_token": str(access_token)}
 
 
-@auth.route('/change-password/', methods=['PATCH'])
+@auth.route('/change-password', methods=['PATCH'])
 @validate()
 @jwt_required()
 def change_password(body: PasswordChange):

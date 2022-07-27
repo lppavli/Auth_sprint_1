@@ -24,8 +24,11 @@ def jwt_roles_accepted(model, *roles: str):
             if not user_roles.intersection(roles):
                 return {"msg": 'Доступ запрещен.'}, HTTPStatus.PAYMENT_REQUIRED
             return fn(*args, **kwargs)
+
         return decorated_view
+
     return wrapper
+
 
 @users.route('/roles', methods=['GET'])
 @validate(response_many=True)
@@ -44,7 +47,7 @@ def get_user_roles():
 @validate()
 def assign_roles(body: RoleUser):
     role_user_exist = db.session.query(UserRole).filter(UserRole.user_id == body.user_id,
-                                                   UserRole.role_id == body.role_id).first()
+                                                        UserRole.role_id == body.role_id).first()
     if role_user_exist:
         return {"msg": "Role is already assigned to the user"}, HTTPStatus.CONFLICT
     new_role_user = UserRole(user_id=body.user_id, role_id=body.role_id)
@@ -59,10 +62,10 @@ def assign_roles(body: RoleUser):
 @validate()
 def delete_role_from_user(body: RoleUser):
     role_user = db.session.query(UserRole).filter(UserRole.user_id == body.user_id,
-                                                        UserRole.role_id == body.role_id).first()
+                                                  UserRole.role_id == body.role_id).first()
     if not role_user:
         return {"msg": "Role for user not found"}, HTTPStatus.NOT_FOUND
     db.session.query(UserRole).filter_by(user_id=body.user_id,
-                                     role_id=body.role_id).delete()
+                                         role_id=body.role_id).delete()
     db.session.commit()
     return {"msg": "Role for user succefully deleted"}, HTTPStatus.OK

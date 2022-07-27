@@ -1,0 +1,172 @@
+swagger: 3.0
+openapi: 3.0.0
+info:
+  title: OpenAPI для сервиса авторизации и управления ролями пользователей
+  version: 0.0.1
+
+paths:
+
+  /api/v1/auth/signup:
+    post:
+      summary: зарегистрировать пользователя
+      tags:
+        - auth_api
+      description: Регистрация нового пользователя
+      responses:
+        '201':
+          description: Пользователь зарегистрирован
+        '400':
+          description: Логин или пароль не соответствуют требованиям
+        '409':
+          description: Пользователь уже существует
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        description: Данные пользователя для регистрации
+
+  /api/v1/auth/login:
+    post:
+      summary: залогинить пользователя
+      tags:
+        - auth_api
+      description: Вход пользователя в систему
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        description: Данные пользователя для входа
+      responses:
+        '200':
+          description: 'successfully logged in'
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+                example: jwtAuthAccess=abcde.1234; jwtAuthRefresh=abcde.3452; Path=/; HttpOnly
+        '401':
+          description: 'auth failed'
+
+  /api/v1/auth/logout:
+    post:
+      summary: разлогинить пользователя
+      tags:
+        - auth_api
+      description: Выход пользователя из системы
+      responses:
+        '200':
+          description: 'successfully logged out'
+        '401':
+          description: 'auth failed'
+      security:
+        - jwtAuthAccess: [ ]
+        - jwtAuthRefresh: [ ]
+
+  /api/v1/auth/refresh:
+    post:
+      summary: обновить access токен
+      tags:
+        - auth_api
+      description: Обновить токен доступа
+      responses:
+        '200':
+          description: 'succesfully updated access token'
+        '401':
+          description: 'failed to updated access token'
+      security:
+        - jwtAuthAccess: [ ]
+
+  /api/v1/auth/change-password/:
+    patch:
+      summary: изменить пароль
+      tags:
+        - auth_api
+      description: Обновить данные пароля
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChangePassword'
+      responses:
+        '200':
+          description: 'succesfully updated user data'
+        '403':
+          description: 'no permissions'
+      security:
+        - jwtAuthAccess: [ ]
+
+  /api/v1/auth/history:
+    get:
+      summary: получить историю входов в аккаунт
+      tags:
+        - auth_api
+      description: Предоставить историю аутентификации аккаунта
+      security:
+        - jwtAuthAccess: [ ]
+      responses:
+        '200':
+          description: 'OK'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/History'
+
+
+components:
+  schemas:
+
+    User:
+      type: object
+      required:
+        - login
+        - password
+      properties:
+        login:
+          type: string
+          example: user
+        password:
+          type: string
+          example: password
+
+    ChangePassword:
+      type: object
+        required:
+          - old_password
+          - new_password
+        properties:
+          old_password:
+            type: string
+            example: 12345
+          new_password:
+            type: string
+            example: 54321
+
+    History:
+      type: object
+        required:
+          - user_agent
+          - ip_address
+          - auth_datetime
+        properties:
+          user_agent:
+            type: string
+            example: 'Firefox'
+          ip_address:
+            type: string
+            example: '192.186.1.1'
+          auth_datetime:
+            type: string
+            format: datetime
+            example: 'Fri, 04 Mar 2022 19:03:51 +0300'
+
+  securitySchemes:
+    jwtAuthAccess:
+      type: apiKey
+      in: cookie
+      name: JWTCOOCKIEACC
+    jwtAuthRefresh:
+      type: apiKey
+      in: cookie
+      name: JWTCOOCKIEREF

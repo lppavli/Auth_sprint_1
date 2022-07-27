@@ -36,7 +36,7 @@ def create_role(body: RoleBase):
     return {"msg": "Role was created"}, HTTPStatus.CREATED
 
 
-@roles.route("/<role_id>/", methods=["PATCH"])
+@roles.route("/<role_id>", methods=["PATCH"])
 @jwt_required()
 @jwt_roles_accepted(User, 'admin')
 @validate()
@@ -53,7 +53,7 @@ def update_role(role_id: UUID4, body: RoleBase):
     return RoleBase(id=role.id, name=role.name)
 
 
-@roles.route("/<role_id>/", methods=["DELETE"])
+@roles.route("/<role_id>", methods=["DELETE"])
 @jwt_required()
 @jwt_roles_accepted(User, 'admin')
 @validate()
