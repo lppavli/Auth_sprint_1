@@ -76,10 +76,10 @@ def login_user(body: UserLogin):
         db.session.add(user_info)
         db.session.commit()
         db.session.remove()
-        return {"message": "Successful Entry",
+        return jsonify({"message": "Successful Entry",
                 "user": user_id,
-                "access_token": str(access_token),
-                "refresh_token": str(refresh_token)}
+                "access_token": access_token.decode("utf-8"),
+                "refresh_token": refresh_token.decode("utf-8")})
     return jsonify({'message': 'Wrong password'})
 
 
@@ -96,7 +96,7 @@ def logout():
 def refresh_token():
     identity = get_jwt_identity()
     access_token = create_access_token(identity=identity)
-    return {"access_token": str(access_token)}
+    return {"access_token": access_token.decode("utf-8")}, HTTPStatus.OK
 
 
 @auth.route('/change-password', methods=['PATCH'])
@@ -105,8 +105,6 @@ def refresh_token():
 def change_password(body: PasswordChange):
     identity = get_jwt_identity()
     user = User.query.filter_by(id=identity).first()
-    print(user.id, user.login, user.password)
-    print(type(user))
     if user is None:
         return {'message': 'User not found. Check uuid'}
 
@@ -116,7 +114,7 @@ def change_password(body: PasswordChange):
         db.session.commit()
         return {'message': 'Password changed successfully'}
 
-    return {'message': 'You entered the wrong old password'}
+    return {'message': 'You entered the wrong old password'}, HTTPStatus.OK
 
 
 @auth.route('/history', methods=['GET'])
