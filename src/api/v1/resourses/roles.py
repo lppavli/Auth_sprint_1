@@ -26,7 +26,6 @@ def roles_list():
 @jwt_roles_accepted(User, 'admin')
 @validate()
 def create_role(body: RoleBase):
-    # role = RoleBase(**request.get_json())
     role_exist = db.session.query(Role).filter(Role.name == body.name).first()
     if role_exist:
         return {"msg": "Role already exist"}, HTTPStatus.CONFLICT

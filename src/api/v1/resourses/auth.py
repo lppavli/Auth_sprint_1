@@ -112,9 +112,9 @@ def change_password(body: PasswordChange):
         new_password = generate_password_hash(body.new_password)
         db.session.query(User).filter_by(id=user.id).update({'password': new_password})
         db.session.commit()
-        return {'message': 'Password changed successfully'}
+        return {'msg': 'Password changed successfully'}
 
-    return {'message': 'You entered the wrong old password'}, HTTPStatus.OK
+    return {'msg': 'You entered the wrong old password'}, HTTPStatus.OK
 
 
 @auth.route('/history', methods=['GET'])

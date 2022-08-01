@@ -61,3 +61,24 @@ def test_logout(app_with_db, access_token):
     )
     assert response.status == "200 OK"
     assert response.json['msg'] == 'Access token revoked'
+
+
+def test_change_password(app_with_db, user, access_token):
+    response = app_with_db.patch(
+        url_for("auth.change_password"),
+        json={
+            "old_password": "pass",
+            "new_password": "news"
+        },
+        headers=access_token
+    )
+    assert response.status == "200 OK"
+    assert response.json['msg'] == 'Password changed successfully'
+
+
+def test_refresh(app_with_db, user, refresh_token):
+    response = app_with_db.post(
+        url_for("auth.refresh_token"),
+        headers=refresh_token
+    )
+    assert response.status == "200 OK"
