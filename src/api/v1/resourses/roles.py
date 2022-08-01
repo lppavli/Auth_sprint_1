@@ -16,14 +16,14 @@ roles = Blueprint("roles", __name__)
 @roles.route("/", methods=["GET"])
 @validate(response_many=True)
 @jwt_required()
-@jwt_roles_accepted(User, 'admin')
+@jwt_roles_accepted(User, "admin")
 def roles_list():
     return [RoleBase(id=role.id, name=role.name) for role in Role.query.all()]
 
 
-@roles.route("/create", methods=['POST'])
+@roles.route("/create", methods=["POST"])
 @jwt_required()
-@jwt_roles_accepted(User, 'admin')
+@jwt_roles_accepted(User, "admin")
 @validate()
 def create_role(body: RoleBase):
     role_exist = db.session.query(Role).filter(Role.name == body.name).first()
@@ -37,7 +37,7 @@ def create_role(body: RoleBase):
 
 @roles.route("/<role_id>", methods=["PATCH"])
 @jwt_required()
-@jwt_roles_accepted(User, 'admin')
+@jwt_roles_accepted(User, "admin")
 @validate()
 def update_role(role_id: UUID4, body: RoleBase):
     role = Role.query.filter_by(id=role_id).first()
@@ -47,14 +47,14 @@ def update_role(role_id: UUID4, body: RoleBase):
     if name_exist:
         return {"msg": "Role with this name already exist"}, HTTPStatus.CONFLICT
     role.name = body.name
-    db.session.query(Role).filter_by(id=role.id).update({'name': role.name})
+    db.session.query(Role).filter_by(id=role.id).update({"name": role.name})
     db.session.commit()
     return RoleBase(id=role.id, name=role.name)
 
 
 @roles.route("/<role_id>", methods=["DELETE"])
 @jwt_required()
-@jwt_roles_accepted(User, 'admin')
+@jwt_roles_accepted(User, "admin")
 @validate()
 def delete_role(role_id: UUID4):
     role = Role.query.filter_by(id=role_id).first()

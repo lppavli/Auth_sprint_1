@@ -2,6 +2,7 @@ import os
 import time
 
 import pytest
+
 # BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 from flask import jsonify, url_for
 from flask_jwt_extended import create_access_token, create_refresh_token
@@ -54,12 +55,16 @@ def user(app_with_db):
 
 @pytest.fixture()
 def access_token(user):
-    return {"Authorization": f"Bearer {create_access_token(identity=user.id).decode('utf-8')}"}
+    return {
+        "Authorization": f"Bearer {create_access_token(identity=user.id).decode('utf-8')}"
+    }
 
 
 @pytest.fixture()
 async def refresh_token(user) -> dict:
-    return {"Authorization": f"Bearer {create_refresh_token(identity=user.id).decode('utf-8')}"}
+    return {
+        "Authorization": f"Bearer {create_refresh_token(identity=user.id).decode('utf-8')}"
+    }
 
 
 @pytest.fixture(scope="function")
@@ -72,8 +77,9 @@ def login_super_user(app_with_db):
     admin_role = Role(name="admin")
     db.session.add(admin_role)
     db.session.commit()
-    access_token = create_access_token(identity=user.id,
-                                       additional_claims={"is_administrator": True}).decode('utf-8')
+    access_token = create_access_token(
+        identity=user.id, additional_claims={"is_administrator": True}
+    ).decode("utf-8")
     new_role_user = UserRole(user_id=user.id, role_id=admin_role.id)
     db.session.add(new_role_user)
     db.session.commit()
@@ -95,4 +101,16 @@ def create_role(login_super_user):
     yield role.id
 
     db.session.execute(delete(Role))
+    db.session.commit()
+
+
+@pytest.fixture()
+def assign_role(login_super_user, create_role, user):
+    new_role_user = UserRole(user_id=user.id, role_id=create_role)
+    db.session.add(new_role_user)
+    db.session.commit()
+
+    yield {"user_id": new_role_user.user_id, "role_id": new_role_user.role_id}
+
+    db.session.execute(delete(UserRole))
     db.session.commit()

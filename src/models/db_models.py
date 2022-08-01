@@ -4,17 +4,34 @@ from datetime import datetime
 from flask_sqlalchemy import Model, SQLAlchemy
 from sqlalchemy.dialects.postgresql import UUID
 from werkzeug.security import check_password_hash, generate_password_hash
+
 # from src.db import db
 
 db = SQLAlchemy()
 
 
 class UserRole(db.Model):
-    __tablename__ = 'users_roles'
+    __tablename__ = "users_roles"
 
-    id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, unique=True, nullable=False)
-    user_id = db.Column(UUID(as_uuid=True), db.ForeignKey('users.id'), default=uuid.uuid4(), nullable=False)
-    role_id = db.Column(UUID(as_uuid=True), db.ForeignKey('roles.id'), default=uuid.uuid4(), nullable=False)
+    id = db.Column(
+        UUID(as_uuid=True),
+        primary_key=True,
+        default=uuid.uuid4,
+        unique=True,
+        nullable=False,
+    )
+    user_id = db.Column(
+        UUID(as_uuid=True),
+        db.ForeignKey("users.id"),
+        default=uuid.uuid4(),
+        nullable=False,
+    )
+    role_id = db.Column(
+        UUID(as_uuid=True),
+        db.ForeignKey("roles.id"),
+        default=uuid.uuid4(),
+        nullable=False,
+    )
 
 
 class User(db.Model):
@@ -46,7 +63,13 @@ class User(db.Model):
 class Role(db.Model):
     __tablename__ = "roles"
 
-    id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, nullable=False, unique=True)
+    id = db.Column(
+        UUID(as_uuid=True),
+        primary_key=True,
+        default=uuid.uuid4,
+        nullable=False,
+        unique=True,
+    )
     name = db.Column(db.String(32), unique=True, nullable=False)
     users = db.relationship("User", secondary="users_roles", back_populates="roles")
 
@@ -54,14 +77,19 @@ class Role(db.Model):
         return f"<Role {self.name}>"
 
 
-
-
 class UserHistory(db.Model):
     """Модель для истории входов в аккаунт пользователя"""
-    __tablename__ = 'user_history'
 
-    id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, nullable=False, unique=True)
-    user_id = db.Column(UUID(as_uuid=True), db.ForeignKey('users.id'), nullable=False)
+    __tablename__ = "user_history"
+
+    id = db.Column(
+        UUID(as_uuid=True),
+        primary_key=True,
+        default=uuid.uuid4,
+        nullable=False,
+        unique=True,
+    )
+    user_id = db.Column(UUID(as_uuid=True), db.ForeignKey("users.id"), nullable=False)
     user_agent = db.Column(db.String, nullable=True)
     ip_address = db.Column(db.String, nullable=True)
     auth_datetime = db.Column(db.DateTime, default=datetime.now, nullable=False)

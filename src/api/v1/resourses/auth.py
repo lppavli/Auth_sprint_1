@@ -4,7 +4,13 @@ from flask_pydantic import validate
 import click
 import redis
 from flask import Blueprint, request, jsonify
-from flask_jwt_extended import create_access_token, create_refresh_token, jwt_required, get_jwt, get_jwt_identity
+from flask_jwt_extended import (
+    create_access_token,
+    create_refresh_token,
+    jwt_required,
+    get_jwt,
+    get_jwt_identity,
+)
 from werkzeug.security import generate_password_hash
 
 from db.db import db
@@ -12,17 +18,20 @@ from models import User
 from models.db_models import UserHistory
 from api.v1.schemas.users import UserCreate, UserLogin, History, PasswordChange
 
-auth = Blueprint('auth', __name__)
-admin_create = Blueprint('admin', __name__, cli_group=None)
+auth = Blueprint("auth", __name__)
+admin_create = Blueprint("admin", __name__, cli_group=None)
 
-jwt_redis_blocklist = redis.StrictRedis(host="localhost",  # os.getenv("REDIS_HOST"),
-                                        port=6379,  # os.getenv("REDIS_PORT"),
-                                        db=0, decode_responses=True)
+jwt_redis_blocklist = redis.StrictRedis(
+    host="localhost",  # os.getenv("REDIS_HOST"),
+    port=6379,  # os.getenv("REDIS_PORT"),
+    db=0,
+    decode_responses=True,
+)
 
 
 @admin_create.cli.command("createsuperuser")
-@click.argument('name')
-@click.argument('password')
+@click.argument("name")
+@click.argument("password")
 def create_superuser(login, password):
     user_exist = db.session.query(User).filter(User.login == login).first()
     if user_exist:
@@ -47,7 +56,7 @@ def create_user():
     return {"msg": "User was created."}, HTTPStatus.CREATED
 
 
-@auth.route('/login', methods=['POST'])
+@auth.route("/login", methods=["POST"])
 @validate()
 def login_user(body: UserLogin):
     # data = UserLogin(**request.get_json())
@@ -55,43 +64,50 @@ def login_user(body: UserLogin):
     if not user:
         return {"msg": "User is not found"}, HTTPStatus.NOT_FOUND
     user_id = str(user.id)
-    user_agent = request.headers.get('user-agent', '')
-    user_host = request.headers.get('host', '')
-    user_info = UserHistory(user_id=user_id,
-                            user_agent=user_agent,
-                            ip_address=user_host,
-                            )
+    user_agent = request.headers.get("user-agent", "")
+    user_host = request.headers.get("host", "")
+    user_info = UserHistory(
+        user_id=user_id,
+        user_agent=user_agent,
+        ip_address=user_host,
+    )
     if user.check_password(body.password):
 
         if user.is_superuser:
-            access_token = create_access_token(identity=user.id,
-                                               additional_claims={"is_administrator": True})
+            access_token = create_access_token(
+                identity=user.id, additional_claims={"is_administrator": True}
+            )
             refresh_token = create_refresh_token(identity=user.id)
 
         else:
-            access_token = create_access_token(identity=user.id,
-                                               additional_claims={"is_administrator": False})
+            access_token = create_access_token(
+                identity=user.id, additional_claims={"is_administrator": False}
+            )
             refresh_token = create_refresh_token(identity=user.id)
 
         db.session.add(user_info)
         db.session.commit()
         db.session.remove()
-        return jsonify({"message": "Successful Entry",
+        return jsonify(
+            {
+                "message": "Successful Entry",
                 "user": user_id,
                 "access_token": access_token.decode("utf-8"),
-                "refresh_token": refresh_token.decode("utf-8")})
-    return jsonify({'message': 'Wrong password'})
+                "refresh_token": refresh_token.decode("utf-8"),
+            }
+        )
+    return jsonify({"message": "Wrong password"})
 
 
-@auth.route('/logout', methods=['DELETE'])
+@auth.route("/logout", methods=["DELETE"])
 @jwt_required()
 def logout():
-    jti = get_jwt()['jti']
+    jti = get_jwt()["jti"]
     jwt_redis_blocklist.set(jti, "", ex=timedelta(minutes=5))
     return {"msg": "Access token revoked"}
 
 
-@auth.route('/refresh', methods=['POST'])
+@auth.route("/refresh", methods=["POST"])
 @jwt_required(refresh=True)
 def refresh_token():
     identity = get_jwt_identity()
@@ -99,25 +115,25 @@ def refresh_token():
     return {"access_token": access_token.decode("utf-8")}, HTTPStatus.OK
 
 
-@auth.route('/change-password', methods=['PATCH'])
+@auth.route("/change-password", methods=["PATCH"])
 @validate()
 @jwt_required()
 def change_password(body: PasswordChange):
     identity = get_jwt_identity()
     user = User.query.filter_by(id=identity).first()
     if user is None:
-        return {'message': 'User not found. Check uuid'}
+        return {"message": "User not found. Check uuid"}
 
     if user.check_password(body.old_password):
         new_password = generate_password_hash(body.new_password)
-        db.session.query(User).filter_by(id=user.id).update({'password': new_password})
+        db.session.query(User).filter_by(id=user.id).update({"password": new_password})
         db.session.commit()
-        return {'msg': 'Password changed successfully'}
+        return {"msg": "Password changed successfully"}
 
-    return {'msg': 'You entered the wrong old password'}, HTTPStatus.OK
+    return {"msg": "You entered the wrong old password"}, HTTPStatus.OK
 
 
-@auth.route('/history', methods=['GET'])
+@auth.route("/history", methods=["GET"])
 @jwt_required()
 @validate(response_many=True)
 def get_history():
@@ -127,5 +143,11 @@ def get_history():
     history = UserHistory.query.filter_by(user_id=identity).paginate(
         page, per_page=page_size
     )
-    return [History(user_agent=row.user_agent, ip_address=row.ip_address, auth_datetime=row.auth_datetime)
-            for row in history.items]
+    return [
+        History(
+            user_agent=row.user_agent,
+            ip_address=row.ip_address,
+            auth_datetime=row.auth_datetime,
+        )
+        for row in history.items
+    ]
