@@ -1,14 +1,13 @@
 import pytest
 
+from auth.models.db_models import UserRole
+
 from flask_jwt_extended import create_access_token, create_refresh_token
 from sqlalchemy import delete
 
-from models.db_models import UserRole
-
-# https://github.com/serlesen/backend-flask/blob/chapter_5/tests/conftest.py
-from auth import create_app
-from db.db import db
-from models import User, Role
+from auth.app import create_app
+from auth.db.db import db
+from auth.models import User, Role
 
 
 @pytest.fixture(scope="session")

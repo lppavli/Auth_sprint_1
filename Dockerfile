@@ -1,4 +1,4 @@
-FROM python:3.9.12-alpine3.14
+FROM python:3.9-alpine
 
 RUN apk update \
     && apk add build-base
@@ -14,5 +14,3 @@ COPY . /app
 WORKDIR /app
 
 CMD ["gunicorn", "auth.pywsgi:app", "--bind", ":8000"]
-
-# https://russianblogs.com/article/82981604616/

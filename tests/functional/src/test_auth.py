@@ -1,9 +1,6 @@
 from flask import url_for, request
-from flask_jwt_extended import create_access_token
 
-from db.db import db
-from models import User
-from models.db_models import UserHistory
+from auth.models.db_models import UserHistory
 from http import HTTPStatus
 
 
