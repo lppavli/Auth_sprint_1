@@ -5,10 +5,10 @@ from flask_jwt_extended import jwt_required
 from flask_pydantic import validate
 from pydantic import UUID4
 
-from api.v1.resourses.users import jwt_roles_accepted
-from api.v1.schemas.roles import RoleBase
-from db.db import db
-from models.db_models import UserRole, Role, User
+from auth.api.v1.resourses.users import jwt_roles_accepted
+from auth.api.v1.schemas.roles import RoleBase
+from auth.db.db import db
+from auth.models.db_models import UserRole, Role, User
 
 roles = Blueprint("roles", __name__)
 
@@ -65,4 +65,4 @@ def delete_role(role_id: UUID4):
     return {"msg": "Role succefully deleted"}, HTTPStatus.OK
 
 
-#  https://github.com/Rusich90/Auth_sprint/blob/d5ac36430dca5d976f4a4ca13542b050feb74ae5/app/api/v1/roles.py
+

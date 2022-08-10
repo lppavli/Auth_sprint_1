@@ -4,9 +4,9 @@ from flask import Blueprint
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from flask_pydantic import validate
 
-from api.v1.schemas.roles import RoleUser, RoleBase
-from db.db import db
-from models.db_models import UserRole, User
+from auth.api.v1.schemas.roles import RoleUser, RoleBase
+from auth.db.db import db
+from auth.models.db_models import UserRole, User
 
 users = Blueprint("users", __name__)
 

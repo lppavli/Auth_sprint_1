@@ -1,9 +1,11 @@
-# flask_app/db.py
-import redis as redis
+import os
+
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from dotenv import load_dotenv
 
 
+load_dotenv()
 db = SQLAlchemy()
 
 
@@ -11,6 +13,8 @@ def init_db(app: Flask):
     app.config["SECRET_KEY"] = "SECRET"
     app.config[
         "SQLALCHEMY_DATABASE_URI"
-    ] = "postgresql://app:123qwe@localhost:5432/movies_database"
+    ] = f"postgresql://{os.getenv('POSTGRES_USER')}:" \
+        f"{os.getenv('POSTGRES_PASSWORD')}@{os.getenv('DB_HOST')}:" \
+        f"{os.getenv('DB_PORT')}/{os.getenv('POSTGRES_DB')}"
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     db.init_app(app)

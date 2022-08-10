@@ -1,16 +1,16 @@
 from flask import Flask
 import sys
 
-sys.path.append("../../")
+# sys.path.append("../../")
 from flask_jwt_extended import JWTManager
 from flask_marshmallow import Marshmallow
 from flask_sqlalchemy import SQLAlchemy
 from flasgger import Swagger
-from api.v1.resourses.auth import auth
-from api.v1.resourses.roles import roles
-from api.v1.resourses.users import users
+from .api.v1.resourses.auth import auth
+from .api.v1.resourses.roles import roles
+from .api.v1.resourses.users import users
 
-from db.db import init_db
+from .db.db import init_db
 
 
 def create_app():
@@ -28,3 +28,7 @@ def create_app():
 
     init_db(app)
     return app
+
+
+app = create_app()
+

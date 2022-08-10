@@ -19,6 +19,18 @@ services:
       - "6379:6379"
     expose:
       - "6379"
+  auth:
+    build:
+      context: .
+#      dockerfile: Dockerfile
+    image: auth-image
+    ports:
+      - "8000:8000"
+    expose:
+      - "8000"
+    depends_on:
+      - postgres
+      - redis
 
 
 

@@ -5,7 +5,7 @@ from flask_sqlalchemy import Model, SQLAlchemy
 from sqlalchemy.dialects.postgresql import UUID
 from werkzeug.security import check_password_hash, generate_password_hash
 
-# from src.db import db
+# from auth.db import db
 
 db = SQLAlchemy()
 

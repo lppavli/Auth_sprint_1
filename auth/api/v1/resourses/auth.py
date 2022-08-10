@@ -13,10 +13,10 @@ from flask_jwt_extended import (
 )
 from werkzeug.security import generate_password_hash
 
-from db.db import db
-from models import User
-from models.db_models import UserHistory
-from api.v1.schemas.users import UserCreate, UserLogin, History, PasswordChange
+from auth.db.db import db
+from auth.models import User
+from auth.models.db_models import UserHistory
+from auth.api.v1.schemas.users import UserCreate, UserLogin, History, PasswordChange
 
 auth = Blueprint("auth", __name__)
 admin_create = Blueprint("admin", __name__, cli_group=None)

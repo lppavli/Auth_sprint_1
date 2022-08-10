@@ -1,18 +1,12 @@
-import os
-import time
-
 import pytest
 
-# BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-from flask import jsonify, url_for
 from flask_jwt_extended import create_access_token, create_refresh_token
 from sqlalchemy import delete
 
 from models.db_models import UserRole
 
-BASE_DIR = os.path.abspath(os.path.join(__file__, "../../../"))
 # https://github.com/serlesen/backend-flask/blob/chapter_5/tests/conftest.py
-from src import create_app
+from auth import create_app
 from db.db import db
 from models import User, Role
 

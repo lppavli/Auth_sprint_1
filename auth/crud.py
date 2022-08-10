@@ -1,7 +1,7 @@
 from flask import jsonify, request
-from src.app import app
-from src.db import db
-from src.models.db_models import User
+from auth.app import app
+from auth.db import db
+from auth.models.db_models import User
 
 
 @app.route("/hello-world")
