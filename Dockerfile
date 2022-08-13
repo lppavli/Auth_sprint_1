@@ -13,4 +13,4 @@ COPY . /app
 
 WORKDIR /app
 
-CMD ["gunicorn", "auth.pywsgi:app", "--bind", ":8000"]
+CMD ["gunicorn", "auth.wsgi:app", "--bind", ":8000"]
