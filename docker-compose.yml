@@ -28,6 +28,7 @@ services:
       context: .
 #      dockerfile: Dockerfile
     image: auth-image
+    container_name: auth
     ports:
       - "8000:8000"
     environment:
@@ -43,14 +44,14 @@ services:
 #        aliases:
 #          - flask-app
 
-  tests:
-    image: auth-image
-    entrypoint: ["python", "-m", "pytest", "tests/functional/src"]
-    depends_on:
-      - postgres
-      - redis
-#    networks:
-#      - my-network
+#  tests:
+#    image: auth-image
+#    entrypoint: ["python", "-m", "pytest", "tests/functional/src"]
+#    depends_on:
+#      - postgres
+#      - redis
+##    networks:
+##      - my-network
 
   nginx:
     container_name: nginx

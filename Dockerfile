@@ -12,5 +12,5 @@ COPY . /app
 
 
 WORKDIR /app
-
+ENV PYTHONPATH "${PYTHONPATH}:/app/auth"
 CMD ["gunicorn", "auth.wsgi:app", "--bind", ":8000"]

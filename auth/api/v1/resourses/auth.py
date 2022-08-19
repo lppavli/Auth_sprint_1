@@ -1,15 +1,16 @@
+import os
 from datetime import timedelta
 from http import HTTPStatus
+
 from flask_pydantic import validate
-import click
-import redis
+
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import (
     create_access_token,
     create_refresh_token,
     jwt_required,
     get_jwt,
-    get_jwt_identity,
+    get_jwt_identity, JWTManager,
 )
 from werkzeug.security import generate_password_hash
 
@@ -17,30 +18,24 @@ from auth.db.db import db
 from auth.models import User
 from auth.models.db_models import UserHistory
 from auth.api.v1.schemas.users import UserCreate, UserLogin, History, PasswordChange
+import redis
 
 auth = Blueprint("auth", __name__)
-admin_create = Blueprint("admin", __name__, cli_group=None)
+jwt = JWTManager()
 
 jwt_redis_blocklist = redis.StrictRedis(
-    host="localhost",  # os.getenv("REDIS_HOST"),
-    port=6379,  # os.getenv("REDIS_PORT"),
+    host=os.getenv("REDIS_HOST"),
+    port=os.getenv("REDIS_PORT"),
     db=0,
     decode_responses=True,
 )
 
 
-@admin_create.cli.command("createsuperuser")
-@click.argument("name")
-@click.argument("password")
-def create_superuser(login, password):
-    user_exist = db.session.query(User).filter(User.login == login).first()
-    if user_exist:
-        return "User already exist. Try another login"
-    superuser = User(login=login, is_superuser=True)
-    superuser.set_password(password)
-    db.session.add(superuser)
-    db.session.commit()
-    return "Superuser created"
+@jwt.token_in_blocklist_loader
+def check_if_token_is_revoked(jwt_header, jwt_payload: dict):
+    jti = jwt_payload["jti"]
+    token_in_redis = jwt_redis_blocklist.get(jti)
+    return token_in_redis is not None
 
 
 @auth.route("/signup", methods=["POST"])
@@ -59,7 +54,6 @@ def create_user():
 @auth.route("/login", methods=["POST"])
 @validate()
 def login_user(body: UserLogin):
-    # data = UserLogin(**request.get_json())
     user = db.session.query(User).filter(User.login == body.login).first()
     if not user:
         return {"msg": "User is not found"}, HTTPStatus.NOT_FOUND

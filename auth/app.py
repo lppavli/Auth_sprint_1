@@ -1,12 +1,10 @@
 from flask import Flask
-import sys
-
-# sys.path.append("../../")
 from flask_jwt_extended import JWTManager
+
 from flask_marshmallow import Marshmallow
 from flask_sqlalchemy import SQLAlchemy
 from flasgger import Swagger
-from auth.api.v1.resourses.auth import auth, admin_create
+from auth.api.v1.resourses.auth import auth
 from auth.api.v1.resourses.roles import roles
 from auth.api.v1.resourses.users import users
 
@@ -25,9 +23,8 @@ def create_app():
     app.register_blueprint(auth, url_prefix="/api/v1/auth")
     app.register_blueprint(roles, url_prefix="/api/v1/roles")
     app.register_blueprint(users, url_prefix="/api/v1/users")
-    app.register_blueprint(admin_create)
     init_db(app)
     return app
 
 
-app = create_app()
+

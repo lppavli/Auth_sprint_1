@@ -17,4 +17,5 @@ def init_db(app: Flask):
         f"{os.getenv('POSTGRES_PASSWORD')}@{os.getenv('DB_HOST')}:" \
         f"{os.getenv('DB_PORT')}/{os.getenv('POSTGRES_DB')}"
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+    app.app_context().push()
     db.init_app(app)
