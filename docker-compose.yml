@@ -12,8 +12,8 @@ services:
       - "POSTGRES_PASSWORD"
       - "POSTGRES_USER"
       - "POSTGRES_DB"
-    networks:
-      - my-network
+#    networks:
+#      - my-network
 
   redis:
     image: redis:7.0-alpine
@@ -21,8 +21,8 @@ services:
       - "6379:6379"
     expose:
       - "6379"
-    networks:
-      - my-network
+#    networks:
+#      - my-network
   auth:
     build:
       context: .
@@ -32,15 +32,16 @@ services:
       - "8000:8000"
     environment:
       - APP_NAME=AuthApp
+      - FLASK_APP=auth/app.py
     expose:
       - "8000"
     depends_on:
       - postgres
       - redis
-    networks:
-      my-network:
-        aliases:
-          - flask-app
+#    networks:
+#      my-network:
+#        aliases:
+#          - flask-app
 
   tests:
     image: auth-image
@@ -48,8 +49,8 @@ services:
     depends_on:
       - postgres
       - redis
-    networks:
-      - my-network
+#    networks:
+#      - my-network
 
   nginx:
     container_name: nginx
@@ -61,13 +62,9 @@ services:
       - 80:80
     depends_on:
       - auth
-    networks:
-      - my-network
+#    networks:
+#      - my-network
 
 
-networks:
-  my-network:
-
-
-
-
+#networks:
+#  my-network:
