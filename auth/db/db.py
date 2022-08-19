@@ -11,11 +11,11 @@ db = SQLAlchemy()
 
 def init_db(app: Flask):
     app.config["SECRET_KEY"] = "SECRET"
-    app.config[
-        "SQLALCHEMY_DATABASE_URI"
-    ] = f"postgresql://{os.getenv('POSTGRES_USER')}:" \
-        f"{os.getenv('POSTGRES_PASSWORD')}@{os.getenv('DB_HOST')}:" \
+    app.config["SQLALCHEMY_DATABASE_URI"] = (
+        f"postgresql://{os.getenv('POSTGRES_USER')}:"
+        f"{os.getenv('POSTGRES_PASSWORD')}@{os.getenv('DB_HOST')}:"
         f"{os.getenv('DB_PORT')}/{os.getenv('POSTGRES_DB')}"
+    )
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     app.app_context().push()
     db.init_app(app)

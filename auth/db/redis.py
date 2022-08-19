@@ -1,14 +1,14 @@
 import os
 
-from redis import Redis
+import redis
 from dotenv import load_dotenv
 
 
 load_dotenv()
 
-blocked_access_tokens = Redis(
+jwt_redis_blocklist = redis.StrictRedis(
     host=os.getenv("REDIS_HOST"),
-    port=int(os.getenv("REDIS_PORT")),
-    db=str(os.getenv("REDIS_DB")),
+    port=os.getenv("REDIS_PORT"),
+    db=0,
     decode_responses=True,
 )

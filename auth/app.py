@@ -14,7 +14,7 @@ from auth.db.db import init_db
 def create_app():
     app = Flask(__name__)
 
-    # Swagger доступен по адресу http://127.0.0.1:5000/apidocs/
+    # Swagger доступен по адресу http://127.0.0.1/apidocs/
     swagger = Swagger(app, template_file="project-description/openapi.yaml")
     jwt = JWTManager(app)
     db = SQLAlchemy(app)
@@ -25,6 +25,3 @@ def create_app():
     app.register_blueprint(users, url_prefix="/api/v1/users")
     init_db(app)
     return app
-
-
-

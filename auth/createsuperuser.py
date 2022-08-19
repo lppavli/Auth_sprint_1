@@ -23,4 +23,4 @@ def createsuperuser(login="admin", password="admin"):
 
 if __name__ == "__main__":
     db.create_all(app=create_app())
-    createsuperuser("admin", "admin")
+    print(createsuperuser("admin", "admin"))

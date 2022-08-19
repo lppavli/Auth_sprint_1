@@ -1,4 +1,3 @@
-from typing import Optional
 from datetime import datetime
 from pydantic import BaseModel, UUID4
 
@@ -19,7 +18,6 @@ class UserLogin(UserBase):
 class UserModel(UserBase):
     id: UUID4
     is_superuser: bool
-    # roles: Optional[list]
 
 
 class History(BaseModel):

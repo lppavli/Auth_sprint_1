@@ -19,7 +19,6 @@ CREATE TABLE public.users_roles (
     ON DELETE CASCADE
 );
 
-
 CREATE TABLE public.user_history (
     id uuid PRIMARY KEY,
     user_id uuid NOT NULL REFERENCES public.users (id)
@@ -28,4 +27,3 @@ CREATE TABLE public.user_history (
     ip_address TEXT,
     auth_datetime timestamp with time zone
 );
-

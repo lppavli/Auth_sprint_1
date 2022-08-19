@@ -36,6 +36,13 @@ services:
       - postgres
       - redis
 
+  tests:
+    image: auth-image
+    entrypoint: ["python", "-m", "pytest", "tests/functional/src"]
+    depends_on:
+      - postgres
+      - redis
+
   nginx:
     container_name: nginx
     image: nginx:1.21.6

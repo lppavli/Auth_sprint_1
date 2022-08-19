@@ -1,16 +1,15 @@
-import os
 from datetime import timedelta
 from http import HTTPStatus
 
 from flask_pydantic import validate
-
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import (
     create_access_token,
     create_refresh_token,
     jwt_required,
     get_jwt,
-    get_jwt_identity, JWTManager,
+    get_jwt_identity,
+    JWTManager,
 )
 from werkzeug.security import generate_password_hash
 
@@ -18,17 +17,10 @@ from auth.db.db import db
 from auth.models import User
 from auth.models.db_models import UserHistory
 from auth.api.v1.schemas.users import UserCreate, UserLogin, History, PasswordChange
-import redis
+from auth.db.redis import jwt_redis_blocklist
 
 auth = Blueprint("auth", __name__)
 jwt = JWTManager()
-
-jwt_redis_blocklist = redis.StrictRedis(
-    host=os.getenv("REDIS_HOST"),
-    port=os.getenv("REDIS_PORT"),
-    db=0,
-    decode_responses=True,
-)
 
 
 @jwt.token_in_blocklist_loader

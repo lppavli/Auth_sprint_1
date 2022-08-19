@@ -1,6 +1,6 @@
 from http import HTTPStatus
 
-from flask import Blueprint, request
+from flask import Blueprint
 from flask_jwt_extended import jwt_required
 from flask_pydantic import validate
 from pydantic import UUID4
@@ -8,7 +8,7 @@ from pydantic import UUID4
 from auth.api.v1.resourses.users import jwt_roles_accepted
 from auth.api.v1.schemas.roles import RoleBase
 from auth.db.db import db
-from auth.models.db_models import UserRole, Role, User
+from auth.models.db_models import Role, User
 
 roles = Blueprint("roles", __name__)
 
@@ -63,6 +63,3 @@ def delete_role(role_id: UUID4):
     db.session.query(Role).filter_by(id=role.id).delete()
     db.session.commit()
     return {"msg": "Role succefully deleted"}, HTTPStatus.OK
-
-
-
