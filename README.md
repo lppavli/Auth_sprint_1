@@ -24,6 +24,10 @@
 ```
 docker-compose up -d- --build 
 ```
+# Миграции
+```
+docker exec -it auth cd auth && alembic upgrade head
+```
 # Документация доступна по адресу
 http://127.0.0.1/apidocs/
 # Создание суперпользователя

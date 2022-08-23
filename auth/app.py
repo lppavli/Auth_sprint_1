@@ -9,6 +9,7 @@ from auth.api.v1.resourses.roles import roles
 from auth.api.v1.resourses.users import users
 
 from auth.db.db import init_db
+from auth.createsuperuser import bp
 
 
 def create_app():
@@ -23,5 +24,6 @@ def create_app():
     app.register_blueprint(auth, url_prefix="/api/v1/auth")
     app.register_blueprint(roles, url_prefix="/api/v1/roles")
     app.register_blueprint(users, url_prefix="/api/v1/users")
+    app.register_blueprint(bp)
     init_db(app)
     return app

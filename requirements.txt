@@ -15,3 +15,4 @@ cryptography==37.0.4
 certifi==2022.5.18.1
 cffi==1.15.1
 bcrypt==3.2.2
+alembic==1.8.1
