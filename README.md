@@ -32,7 +32,7 @@ docker exec -it auth cd auth && alembic upgrade head
 http://127.0.0.1/apidocs/
 # Создание суперпользователя
 ```
-docker exec -it auth auth/createsuperuser.py
+docker exec -it auth cd auth && flask superuser create <login> <password>
 ```
 # Тестирование
 ```
